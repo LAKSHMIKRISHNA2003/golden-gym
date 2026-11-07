@@ -36,6 +36,8 @@ Leave `NEXT_PUBLIC_BASE_PATH` unset for local development or a site served from 
 
 The workflow runs `npm ci`, builds the site, and publishes `out/`. GitHub's Pages setup action provides the actual `base_path`, which the build uses for Next.js files and assets in `public/`. No username or repository name is hardcoded.
 
+The Pages artifact excludes the unused original `hero.mp4` to keep deployment smaller. The site continues to use `hero-web.mp4`; the original remains in `public/` and in the repository.
+
 `NEXT_PUBLIC_ENQUIRY_ENDPOINT` is optional. If no real endpoint is configured, the contact form retains its existing inline “not available” state; GitHub Pages does not process enquiries. If you add an endpoint, it must accept browser POST requests and allow the deployed origin through CORS. Add its URL as the repository Actions variable `NEXT_PUBLIC_ENQUIRY_ENDPOINT` only after a real endpoint exists.
 
 ## Custom domain later

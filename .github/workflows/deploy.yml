@@ -40,6 +40,12 @@ jobs:
           NEXT_PUBLIC_ENQUIRY_ENDPOINT: ${{ vars.NEXT_PUBLIC_ENQUIRY_ENDPOINT }}
         run: npm run build
 
+      - name: Keep Pages artifact lean
+        run: |
+          test -f out/hero-web.mp4
+          rm -f out/hero.mp4
+          du -sh out
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
