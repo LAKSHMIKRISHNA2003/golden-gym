@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const plans = [
   {
     number: "01",
@@ -15,6 +19,12 @@ const plans = [
     ],
     action: "CHOOSE STRENGTH",
     featured: false,
+    options: [
+      { duration: "1 MONTH", price: "₹1,800" },
+      { duration: "3 MONTHS", price: "₹4,500" },
+      { duration: "6 MONTHS", price: "₹8,000" },
+      { duration: "12 MONTHS", price: "₹12,000" },
+    ],
   },
   {
     number: "02",
@@ -32,6 +42,12 @@ const plans = [
     ],
     action: "CHOOSE COMPLETE",
     featured: true,
+    options: [
+      { duration: "1 MONTH", price: "₹2,500" },
+      { duration: "3 MONTHS", price: "₹6,000" },
+      { duration: "6 MONTHS", price: "₹10,000" },
+      { duration: "12 MONTHS", price: "₹15,000" },
+    ],
   },
   {
     number: "03",
@@ -49,8 +65,62 @@ const plans = [
     ],
     action: "CONTACT US",
     featured: false,
+    options: null,
   },
 ] as const;
+
+function PlanPrice({ plan }: { plan: (typeof plans)[number] }) {
+  const [selectedDuration, setSelectedDuration] = useState<string>("1 MONTH");
+  const selectedOption = plan.options?.find((option) => option.duration === selectedDuration) ?? plan.options?.[0];
+
+  return (
+    <div className="min-h-[200px] border-b border-white/10">
+      {plan.options ? (
+        <div className="mt-3 mb-8 grid grid-cols-4 gap-1" role="group" aria-label={`${plan.title} membership duration`}>
+          {plan.options.map((option) => (
+            <button
+              key={option.duration}
+              type="button"
+              aria-pressed={selectedOption?.duration === option.duration}
+              onClick={() => setSelectedDuration(option.duration)}
+              className={`min-h-8 border px-1 text-[10px] font-semibold tracking-[0.03em] whitespace-nowrap uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fefc4c] ${
+                selectedOption?.duration === option.duration
+                  ? "border-[#fefc4c] bg-[#fefc4c] text-[#080808]"
+                  : "border-white/15 text-white/60 hover:border-white/40 hover:text-white"
+              }`}
+            >
+              {option.duration}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <a
+          href="#contact"
+          className="mt-3 mb-8 flex min-h-8 w-full items-center justify-center gap-2 border border-[#fefc4c] px-3 text-[10px] font-semibold tracking-[0.08em] text-[#fefc4c] uppercase transition-colors duration-200 hover:bg-[#fefc4c] hover:text-[#080808] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fefc4c]"
+        >
+          CONTACT US <span aria-hidden="true">↗</span>
+        </a>
+      )}
+
+      <p
+        className={`font-heading leading-none font-extrabold tracking-[-0.04em] ${
+          plan.featured ? "text-[#fefc4c]" : "text-white"
+        } ${
+          plan.price === "CUSTOM"
+            ? "text-[clamp(2.2rem,3.2vw,3.8rem)]"
+            : "text-[clamp(3rem,4vw,4.8rem)]"
+        }`}
+      >
+        {selectedOption?.price ?? plan.price}
+      </p>
+      <p className="mt-3 text-[11px] font-medium tracking-[0.12em] text-white/50 uppercase">
+        {selectedOption
+          ? selectedOption.duration === "1 MONTH" ? "/ MONTH" : `FOR ${selectedOption.duration}`
+          : plan.priceNote}
+      </p>
+    </div>
+  );
+}
 
 export default function MembershipSection() {
   return (
@@ -130,32 +200,17 @@ export default function MembershipSection() {
                 )}
               </div>
 
-              <h3 className="mt-5 min-h-[68px] font-heading text-[clamp(2rem,2.6vw,2.6rem)] leading-[0.95] font-extrabold tracking-[-0.02em] text-[#f2f2f2] uppercase">
+              <h3 className="mt-6 min-h-[68px] font-heading text-[clamp(2rem,2.6vw,2.6rem)] leading-[0.95] font-extrabold tracking-[-0.02em] text-[#f2f2f2] uppercase">
                 {plan.title}
               </h3>
 
-              <p className="min-h-[104px] text-[13px] leading-[1.6] text-white/65">
+              <p className="min-h-[56px] text-[13px] leading-[1.6] text-white/65">
                 {plan.description}
               </p>
 
-              <div className="min-h-[120px] border-b border-white/10">
-                <p
-                  className={`font-heading leading-none font-extrabold tracking-[-0.04em] ${
-                    plan.featured ? "text-[#fefc4c]" : "text-white"
-                  } ${
-                    plan.price === "CUSTOM"
-                      ? "text-[clamp(2.2rem,3.2vw,3.8rem)]"
-                      : "text-[clamp(3rem,4vw,4.8rem)]"
-                  }`}
-                >
-                  {plan.price}
-                </p>
-                <p className="mt-2 text-[11px] font-medium tracking-[0.12em] text-white/50 uppercase">
-                  {plan.priceNote}
-                </p>
-              </div>
+              <PlanPrice plan={plan} />
 
-              <ul className="min-h-[210px] flex-1 space-y-3 py-7 text-[13px] leading-[1.6] text-white/70">
+              <ul className="min-h-[210px] flex-1 space-y-4 py-8 text-[13px] leading-[1.6] text-white/70">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <svg
